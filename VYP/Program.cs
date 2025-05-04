@@ -16,6 +16,7 @@ static void Write(User newusr)
     string content = File.ReadAllText(jsonpath);
 
     UserList userlist = JsonSerializer.Deserialize<UserList>(content);
+    Console.WriteLine(userlist.Users.Count);
     int maxid = userlist.Users.Max(x => x.id);
 
     newusr.id = ++maxid;
@@ -26,31 +27,56 @@ static void Write(User newusr)
     Console.WriteLine("Data Added Succesfully");
 }
 
+static string EmailControl()
+{
+    string jsonpath = AppDomain.CurrentDomain.BaseDirectory + "Data\\jsconfig1.json";
+    string content = File.ReadAllText(jsonpath);
+    UserList userlist = JsonSerializer.Deserialize<UserList>(content);
+    while (true)
+    {
+        Console.WriteLine("Enter email:");
+        string email = Console.ReadLine();
+        bool isexist = false;
+
+        for (int i = 1; i < userlist.Users.Count; i++)
+        {
+            if (userlist.Users[i].email == email)
+            {
+                Console.WriteLine("This email already exists. Please try again.");
+                isexist = true; 
+                break;
+            }
+        }
+        if (isexist)
+        {
+            continue;
+        }
+        return email;
+    }
+}
+
 static void Main()
 {
-    Console.WriteLine(Get());
-    Console.ReadKey();
-    User user = new User()
-    {
-        username = "yusuf cihan yılmaz",
-        email = "yusuf@gmail.com",
-        password = "11111117"
+    string jsonpath = AppDomain.CurrentDomain.BaseDirectory + "Data\\jsconfig1.json";
+    string content = File.ReadAllText(jsonpath);
+    UserList userlist = JsonSerializer.Deserialize<UserList>(content);
 
-    };
-    Write(user);
-    Console.ReadKey();
-    Console.WriteLine(Get());
-    Console.ReadKey();
-    User user2 = new User()
-    {
-        username = "arda inanç",
-        email = "arda@gmail.com",
-        password = "12345678"
-    };
-    Write(user2);
-    Console.ReadKey();
-    Console.WriteLine(Get());
-    Console.ReadKey();
+    Get();
+
+    Console.WriteLine("Enter username:");
+    string username = Console.ReadLine();
+    string email = EmailControl();
+    Console.WriteLine("Enter password:");
+    string password = Console.ReadLine();
+        User newusr = new User()
+        {
+            username = username,
+            email = email,
+            password = password
+        };
+    Write(newusr);
+    Console.WriteLine();
+
 }
 
 Main();
